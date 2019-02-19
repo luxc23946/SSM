@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="hkd.luxc.dao.EmployeeMapper">
+    <cache type="org.mybatis.caches.ehcache.EhcacheCache"/>
+    
+    <insert id="save" parameterType="hkd.luxc.entities.Employee" useGeneratedKeys="true" keyProperty="id">
+         insert into employee(last_name,email,gender,dept_id) values(#{lastName},#{email},#{gender},#{dept.id})
+    </insert>
+    
+    
+    <resultMap type="hkd.luxc.entities.Employee" id="emp">
+       <id column="id" property="id"/>
+       <result column="last_name" property="lastName" />
+       <result column="email" property="email" />
+       <result column="gender" property="gender" />
+       <association property="dept" javaType="hkd.luxc.entities.Department">
+	      <id column="dept_id" property="id"/>
+	      <result column="dept_name" property="deptName"/>
+	   </association>
+    </resultMap>
+    <select id="getAll" resultMap="emp">
+        SELECT e.id id,last_name,email,gender,dept_id,dept_name
+        FROM employee e,department d
+        WHERE e.dept_id=d.id   
+    </select>
+    
+    <select id="get" resultMap="emp">
+       SELECT e.id id,last_name,email,gender,dept_id,dept_name
+       FROM employee e,department d
+       WHERE e.dept_id=d.id AND e.id =#{id}
+    </select>
+    
+    <delete id="delete">
+      DELETE FROM employee WHERE id=#{id}
+    </delete>
+    
+    <update id="update">
+      UPDATE employee SET email=#{email},gender=#{gender},dept_id=#{dept.id}
+    </update>
+	
+	
+</mapper>
